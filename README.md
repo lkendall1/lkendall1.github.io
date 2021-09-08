@@ -1,1 +1,1 @@
-# lkendall1.github.io
+# Math 421 Statiastical Analysis with R
