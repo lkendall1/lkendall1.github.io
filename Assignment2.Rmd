@@ -1,0 +1,77 @@
+
+---
+output: # rmarkdown::github_document
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Assignment 2.  Operations on Numeric Vectors"
+---
+
+***Note*:** *This problems make uses of the element-to-element property of operations on numeric vectors to calculate pattern summation.* 
+
+***Leanne Kendall***
+
+1. Calculate: 
+
+
+
+$$
+S = 1 + 4 + 7 + 11 +... + 100
+$$
+```{r}
+sum (seq(1,100,3))
+```
+
+```{r, include=FALSE, echo=FALSE, results=FALSE}
+x <- seq(1, 100, 3)
+sum(x)
+```
+
+
+2. Calculate: 
+
+
+$$
+S = 1^{2020} + 2^{2020} + 3^{2020} +...+2020^{2020}
+$$
+
+
+```{r}
+x <- c(1:2020)
+sum(x^2020)
+```
+
+3. Calculate: 
+
+$$
+S = \frac{1}{1\cdot 2}+\frac{1}{2 \cdot 3}+...+\frac{1}{2020\cdot 2021}
+$$
+```{r}
+x1 <- c(1:2020)
+x2 <- c(2:2021)
+sum(1/(x1*x2))
+```
+
+4. Calculate: 
+
+$$
+S = \frac{1}{1\cdot 2 \cdot 3}+\frac{1}{2 \cdot 3 \cdot 4}+...+\frac{1}{2020\cdot 2021 \cdot 2022}
+$$
+```{r}
+x1 = c(1:2020)
+x2 = c(2:2021)
+x3 = c(3:2022)
+sum(1/(x1*x2*x3))
+```
+
+
+5. Calculate: 
+
+$$
+S = 1^1 + 3^3 + 5^5 + 7^7 +....+2021^{2021}
+$$
+```{r}
+x <- seq(1,2021,2) 
+sum(x^x)
+```
+
