@@ -1,0 +1,138 @@
+
+---
+output: 
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Assignment 7: Visualization - Some aspects of ggplot2"
+---
+-------
+
+### I. Questions on Your Selected Data
+
+Use the data of your own.  Produce the following types of plots and comment on each plot. Plots should be meaningful. If you use the data we used in class, make sure the plots are not the same as the ones in the slides. All plots should have title, caption, appropriate labels on x and y-axis. 
+
+### Loading the data
+
+My data is a student performance data set
+
+```{r}
+df <- read_delim('C:/Users/student/Documents/R/Math421/student-mat.csv', delim =';')
+```
+
+
+
+
+-------
+
+1. Make a plot using `face_wrap` by one categorical variable (`face_wrap(~variable1)`)
+
+```{r}
+head(df)
+```
+
+```{r}
+df  %>% 
+  ggplot(mapping=aes(x=age, y=failures))+ 
+  geom_col()+
+  geom_smooth()+
+  facet_wrap(~sex)
+```
+
+
+2. Make a plot using `face_wrap` by two categorical variables (`face_wrap(variable1~variable2)`)
+
+```{r}
+df  %>% 
+  ggplot(mapping=aes(x=age, y=failures))+ 
+  geom_col()+
+  geom_smooth()+
+  facet_wrap(~sex~activities)
+```
+
+
+3. Make a plot using `position ='jitter'`. 
+
+```{r}
+df %>% ggplot()+ 
+  geom_point(mapping=aes(x=freetime, y=absences, color=sex), 
+             position='jitter')
+```
+
+
+4. Make a plot using `position ='dodge'`.
+
+```{r}
+df %>% ggplot()+ 
+  geom_point(mapping=aes(x=freetime, y=absences, color=sex), 
+             position='dodge')
+```
+
+
+5. Make a plot using `position ='fill'`. 
+
+```{r}
+df %>% ggplot()+ 
+  geom_point(mapping=aes(x=freetime, y=absences, color=sex), 
+             position='fill')
+```
+
+
+6. Make a plot using `geom_col`.
+
+```{r}
+df %>% ggplot()+ 
+  geom_col(mapping=aes(x=age, y=absences, fill=sex), 
+             )
+```
+
+
+7. Change the theme of one of your plots. 
+
+```{r}
+df %>% ggplot()+ 
+  geom_col(mapping=aes(x=age, y=absences, fill=sex)) + theme_dark()
+```
+
+
+8. Save a plot and put a link of the plot to your Github Webpage.  To link a plot `abc.png` you just need to insert the following on the README.md
+
+```{r, eval=FALSE}
+gg <- df  %>% 
+  ggplot(mapping=aes(x=age, y=failures))+ 
+  geom_col()+
+  geom_smooth()+
+  facet_wrap(~sex)
+ggsave(filename = 'abc.png', plot = gg)
+
+
+```
+
+
+### II. Questions on Covid Vaccination Data
+
+In this section of questions, we will use  the covid vaccination data for the US. The data and data dictionary can be found at the below link:
+
+- [Data](https://raw.githubusercontent.com/govex/COVID-19/master/data_tables/vaccine_data/us_data/time_series/vaccine_data_us_timeline.csv)
+
+- [Data Dictionary](https://github.com/govex/COVID-19/blob/master/data_tables/vaccine_data/us_data/data_dictionary.csv)
+
+
+```{r}
+library(tidyverse)
+df <- read_csv('https://raw.githubusercontent.com/govex/COVID-19/master/data_tables/vaccine_data/us_data/time_series/vaccine_data_us_timeline.csv')
+```
+
+1. Put titles, captions, appropriate labels on x and y-axis for the last two questions in Assignments 6.
+
+2. Since the data seems lack of categorical variables, we will create a few categorical variables for easier visualization. From the `Date` variable create three categorical variables to record weekdays, months and quarters. You could also create a categorical variable to record the state regions (South, North East, Midwest, West) or other new categorical variables.
+
+3. With the updated data after question 2.  Create at least 7 new meaningful graphs.  Your graphs should have titles, captions, appropriate labels on x and y-axis. You should also make use of the follows. 
+
+ - geom_point
+ - geom_line
+ - geom_smooth
+ _ geom_bar
+ - geom_col
+ - face_wrap
+ - combination of geom_point and geom_smooth 
