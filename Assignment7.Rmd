@@ -17,6 +17,7 @@ Use the data of your own.  Produce the following types of plots and comment on e
 My data is a student performance data set
 
 ```{r}
+library(tidyverse)
 df <- read_delim('C:/Users/student/Documents/R/Math421/student-mat.csv', delim =';')
 ```
 
@@ -124,15 +125,102 @@ df <- read_csv('https://raw.githubusercontent.com/govex/COVID-19/master/data_tab
 ```
 
 1. Put titles, captions, appropriate labels on x and y-axis for the last two questions in Assignments 6.
+```{r}
+library(lubridate)
+df$Month <-  factor(month(df$Date, label = TRUE))
+
+d2 <- df%>% filter(Vaccine_Type!=('All'), Province_State == c("Rhode Island", "Maine", "New Hampshire", "Massachusetts", "Connecticut", "Vermont")) %>% group_by(Vaccine_Type, Month) %>% summarise(doses = mean(Doses_admin))
+
+# Plot from the newly create data
+d2 %>% ggplot()+geom_col(mapping=aes(x=Month, y=doses, fill=Vaccine_Type))+scale_y_log10() + labs(x='Month', 
+       y = 'Doses Administered', 
+       title = 'Popularity of Vaccines in NE', 
+       caption = 'Pfizer appears to be the constant most popular vaccine type over the course of the year.')
+```
+
+
+```{r}
+# Create a dataset recording these two vaccine administered by state in ne
+d2 <- df %>% filter(Vaccine_Type!=('All'), Province_State == c("Rhode Island", "Maine", "New Hampshire", "Massachusetts", "Connecticut", "Vermont"))%>% group_by(Date, Province_State) %>% summarise(vac_admin=mean(Doses_admin, na.rm=TRUE))
+
+# Plot from the newly create data
+d2 %>% ggplot()+geom_line(mapping=aes(x=Date, y=vac_admin, color=Province_State)) + labs(x='Month', 
+       y = 'Vaccines Administered', 
+       title = 'Vaccines Administered by Date in NE', 
+       caption = 'Massachusetts is the front runner in vaccine administrations.')
+```
+
 
 2. Since the data seems lack of categorical variables, we will create a few categorical variables for easier visualization. From the `Date` variable create three categorical variables to record weekdays, months and quarters. You could also create a categorical variable to record the state regions (South, North East, Midwest, West) or other new categorical variables.
+```{r}
+library(lubridate)
+df$Date <- ymd(df$Date)
+
+df$month = month(df$Date)
+
+df$weekday = wday(df$Date)
+
+df$quarter = quarters(df$Date)
+
+```
+
 
 3. With the updated data after question 2.  Create at least 7 new meaningful graphs.  Your graphs should have titles, captions, appropriate labels on x and y-axis. You should also make use of the follows. 
 
  - geom_point
+ 
+```{r}
+df2 <- df %>% filter( Vaccine_Type=='All') %>% group_by(quarter) %>% summarise(Doses_admin = mean(Doses_admin, na.rm = TRUE))
+
+
+df2 %>% ggplot()+
+  geom_point(mapping = aes(y= Doses_admin, x=quarter)) + labs(title = "Numbers of Doses Administered by Quarter", caption = "Quarter 3 appears to have the highest frequency of doses administered", y= "Doses Administered")
+
+```
+ 
  - geom_line
+```{r}
+df %>% ggplot()+
+  geom_line(mapping = aes(x= Doses_shipped, y=Doses_admin)) + labs(title="Doses Shipped vs Doses Administered", x = " Doses Shipped", y= "Doses Administered", caption = "The two have a clear positive linear relationship")
+
+```
+ 
  - geom_smooth
+```{r}
+df %>% ggplot()+
+  geom_smooth(mapping = aes(x= Doses_shipped, y=Doses_admin)) + labs(title="Doses Shipped vs Doses Administered", x = " Doses Shipped", y= "Doses Administered", caption = "The two have a clear positive linear relationship")
+```
+ 
  _ geom_bar
+```{r}
+df %>% ggplot()+ 
+  geom_bar(mapping=aes(x=quarter)) + labs (title = "Number of Records per Quarter", caption= "We only have complete data for quarters 2 and 3.")
+```
+ 
+ 
  - geom_col
+ 
+```{r}
+
+df2 <- df  %>% group_by(quarter, Vaccine_Type) %>% summarise(Doses_admin = mean(Doses_admin, na.rm = TRUE))
+
+
+df2 %>% ggplot()+
+  geom_col(mapping = aes(y= Doses_admin, x=quarter, fill=Vaccine_Type)) + labs(title = "Numbers of Doses Administered by Quarter", caption = "Quarter 3 appears to have the highest frequency of doses administered", y= "Doses Administered")
+```
+ 
  - face_wrap
+```{r}
+head(df)
+df %>% filter(Province_State == c("Rhode Island", "Maine", "New Hampshire", "Massachusetts", "Connecticut", "Vermont")) %>%
+  ggplot()+ 
+  geom_bar(mapping=aes(x=quarter)) +
+  facet_wrap(~Province_State)
+```
+ 
  - combination of geom_point and geom_smooth 
+```{r}
+df %>% 
+  ggplot(mapping = aes(x= Doses_shipped, y=Doses_admin)) + geom_point() + geom_smooth() + labs(title="Doses Shipped vs Doses Administered", x = " Doses Shipped", y= "Doses Administered", caption = "The two have a clear positive linear relationship")
+```
+ 
