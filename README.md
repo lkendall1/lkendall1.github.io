@@ -7,5 +7,5 @@
 [Click here to my Assignment 5](Assignment5.html)  
 [Click here to my Assignment 6](Assignment6.html)   
 [Click here to my Assignment 7](Assignment7.html)  
-[Link to the plot](abc.png) 
+[Link to the plot](abc.png)   
 [Click here to my Assignment 8](Assignment8.html)  
