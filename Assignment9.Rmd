@@ -1,0 +1,120 @@
+
+---
+output: 
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Assignment 9: Visualization - Revealing a graph"
+---
+
+1. Use the dataset by of covid 19 by WHO at https://covid19.who.int/WHO-COVID-19-global-data.csv. Find the three countries with the most numbers of deaths by Covid-19. 
+
+```{r}
+library(tidyverse)
+
+df <- read_csv("https://covid19.who.int/WHO-COVID-19-global-data.csv")
+tail(df)
+```
+
+
+Hint: 
+
+-  Use `filter` to select the most current date 
+
+-  Pipe with `arrange(-Cumulative_deaths)` to rank the data by the number of cumulative deaths
+```{r}
+max(df$Date_reported)
+```
+
+
+```{r}
+df %>% filter(Date_reported == '2021-10-25') %>% arrange(-Cumulative_deaths)
+```
+
+
+2. Make a plot revealing the number of deaths in the three countries with the most numbers of deaths
+
+```{r}
+library(gganimate)
+library(ggplot2)
+library(lubridate)
+
+df %>% 
+  filter(Country %in% c('India','Russian Federation', 'Indonesia')) %>% 
+  ggplot(aes(y=Cumulative_cases,
+            x=Date_reported,
+            color=Country))+ 
+  geom_line()+
+  transition_reveal(Date_reported)
+```
+
+
+3. Create the new variable (column) `death_per_cases` recording the number of deaths per cases (Hint: divide cumulative deaths by cumulative cases).  What are the three countries with the highest deaths per cases? 
+
+```{r}
+df$death_per_cases = df$Cumulative_deaths / df$Cumulative_cases
+df %>% filter(Date_reported == '2021-10-25') %>% arrange(-death_per_cases)
+
+```
+
+
+4. Make a plot revealing the number of deaths per cases of the US, Italy and Mexico. 
+
+```{r}
+df %>% 
+  filter(Country %in% c('United States of America','Italy', 'Mexico')) %>% 
+  ggplot(aes(y=death_per_cases,
+            x=Date_reported,
+            color=Country))+ 
+  geom_line()+
+  transition_reveal(Date_reported)
+```
+
+
+5. Use `transition_reveal` to create three animated graph with the vaccination data at 
+
+https://raw.githubusercontent.com/govex/COVID-19/master/data_tables/vaccine_data/us_data/time_series/vaccine_data_us_timeline.csv
+
+```{r}
+df <- read_csv("https://raw.githubusercontent.com/govex/COVID-19/master/data_tables/vaccine_data/us_data/time_series/vaccine_data_us_timeline.csv")
+
+tail(df, 20)
+```
+```{r}
+# Vaccine Doses Administered Growth in 2021
+
+library(lubridate)
+df$Month <-  factor(month(df$Date))
+df$Month <- as.numeric(as.character(df$Month))
+df$Year <-  factor(year(df$Date))
+
+
+d2 <- df %>% filter(Vaccine_Type == c('All'), Year == 2021) %>% group_by(Month,Vaccine_Type) %>% summarise(doses = mean(Doses_admin))
+
+# Plot from the newly create data
+d2 %>% ggplot()+geom_line(mapping=aes(x=Month, y=doses, color=Vaccine_Type)) + labs(x='Month', 
+       y = 'Vaccines Administered', 
+       title = 'Monthly Growth in Vaccine Doses Administered') + 
+  transition_reveal(Month)
+```
+```{r}
+df %>% 
+  filter(Province_State %in% c('California','Texas', 'Florida'), Year == 2021) %>% group_by (Province_State, Month) %>% summarize(Doses_sum = sum(Doses_admin)) %>% 
+  ggplot(aes(y=Doses_sum,
+            x=Month,
+            color=Province_State))+ 
+  geom_line()+
+  transition_reveal(Month)
+```
+```{r}
+df %>% 
+  filter(Province_State %in% c('California','Texas', 'Florida')) %>% 
+  ggplot(aes(y=Doses_admin,
+            x=Date,
+            color=Province_State))+ 
+  geom_line()+
+  transition_reveal(Date)
+```
+
+
+
