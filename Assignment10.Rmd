@@ -1,0 +1,170 @@
+
+---
+output: 
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Assignment 10: Predictive Modeling - Part 1"
+---
+
+
+***Submission***: Submit the link on Github of the assignment to Canvas
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+```
+
+
+-------
+
+1. Install the package `mlbench` and use the follows to import the data
+
+```{r}
+library(mlbench)
+data(PimaIndiansDiabetes)
+df <- PimaIndiansDiabetes
+```
+
+- Set seed to be 2020. 
+- The target variable is `diabetes`
+- Partition the data into 80% training and 20% testing.  
+
+```{r}
+head(df)
+```
+```{r}
+names(df)[9] <- 'target'
+
+library(caret)
+set.seed(2020)
+splitIndex <- createDataPartition(df$target, p = .80, 
+                                  list = FALSE)
+df_train <- df[ splitIndex,]
+df_test <- df[-splitIndex,]
+```
+
+
+-------
+
+2. Practice Decision Tree.  Do the follows:
+
+  - Use `rpart` package, create a decision tree with maximum depth of 3.
+  
+```{r}
+library(rpart)
+tree_model <- rpart(target ~ ., data = df_train,
+                 control = rpart.control(maxdepth = 3))
+```
+  
+  
+  - Calculate the accuracy of the model on the testing data.
+  
+```{r}
+#predict on testing data
+pred <- predict(tree_model, df_test, type = "class")
+#Evaluate the predictions
+cm <- confusionMatrix(data = pred, reference = df_test$target, positive = "pos")
+cm$overall[1]
+```
+  
+  
+  - Plot the tree
+```{r}
+library(rattle)
+fancyRpartPlot(tree_model)
+```
+  
+  
+  - Plot the variable importance by the tree
+```{r}
+tree_model$variable.importance
+barplot(tree_model$variable.importance)
+```
+
+-------
+
+3. Practice Random Forest.  Do the follows: 
+
+  - Use `randomForest` package, create a random forest of 1000 trees. 
+```{r}
+library(randomForest)
+forest_model = randomForest(target ~ ., data=df_train, ntree = 1000)
+
+```
+  
+  
+  - Calculate the accuracy of the model on the testing data. 
+  
+```{r}
+pred <- predict(forest_model, df_test, method = "rf")
+cm <- confusionMatrix(data = pred, reference = df_test$target, positive = "pos")
+cm$overall[1]
+```
+  
+  
+  - Plot the variable importance by the forest
+  
+```{r}
+varImp(forest_model)
+```
+  
+
+-------
+
+4. Compare the testing accuracy of a forest of 1000 trees and a forest of 2000 trees. 
+
+```{r}
+model1000 = randomForest(target ~ ., data=df_train, ntree = 1000)
+pred <- predict(model1000, df_test, type = "class")
+cm1 <- confusionMatrix(data = pred, reference = df_test$target, positive = "pos")
+cm1$overall[1]
+
+model2000 = randomForest(target ~ ., data=df_train, ntree = 2000)
+pred <- predict(model2000, df_test, type = "class")
+cm2 <- confusionMatrix(data = pred, reference = df_test$target, positive = "pos")
+cm2$overall[1]
+```
+
+
+-------
+
+5. Using Caret, create a tree with maximum depth of 3 and forest of 1000 trees. Compare the accuracy of these two models.
+
+```{r}
+model1 <- train(target~., data=df_train, 
+                method = "rpart2",
+                maxdepth=3)
+pred <- predict(model1, df_test)
+cm <- confusionMatrix(data = pred, reference = df_test$target, positive = "pos")
+cm$overall[1]
+
+model2 <- train(target~., data=df_train, 
+                method = "rf",
+                ntree = 1000) 
+pred <- predict(model2, df_test)
+cm <- confusionMatrix(data = pred, reference = df_test$target, positive = "pos")
+cm$overall[1]
+```
+
+
+-------
+
+6. Plot variable importance by the two models in 5. 
+
+```{r}
+plot(varImp(model1))
+plot(varImp(model2))
+```
+
+
+-------
+
+7. (Optional - For extra credits only) Use your own selected data.  Do the follows. 
+
+- Handle missing values if any
+
+- Put the variables in the right format (categorical vs. continuous)
+
+- Select a binary target variable (Use can create a binary target variable from a continuous variable). 
+
+- Using caret with method `ranger` to train then test the accuracy of a random forest of 1000 trees. 
