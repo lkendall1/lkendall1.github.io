@@ -10,4 +10,5 @@
 [Link to the plot](abc.png)   
 [Click here to my Assignment 8](Assignment8.html)  
 [Click here to my Assignment 9](Assignment9.html)  
-[Click here to my Assignment 10](Assignment10.html)
+[Click here to my Assignment 10](Assignment10.html)  
+[Click here to my Assignment 11](Assignment11.html)
