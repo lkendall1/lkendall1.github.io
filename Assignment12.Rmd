@@ -1,0 +1,120 @@
+
+---
+output: 
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Assignment 12: Predictive Modeling - Part 3"
+---
+
+-------
+
+1. Install the package `mlbench` and use the follows to import the data
+
+```{r}
+library(mlbench)
+data(PimaIndiansDiabetes)
+df <- PimaIndiansDiabetes
+```
+
+- Set seed to be 2020. 
+- The target variable is `diabetes`
+- Partition the data into 80% training and 20% testing. 
+
+```{r}
+names(df)[9] <- 'target'
+
+library(caret)
+set.seed(2020)
+splitIndex <- createDataPartition(df$target, p = .80, 
+                                  list = FALSE)
+df_train <- df[ splitIndex,]
+df_test <- df[-splitIndex,]
+```
+
+
+-------
+
+2. Use cross-validation of 30 folds to tune random forest (method='rf').  What is the `mtry` value that produces the greatest accuracy?
+
+```{r}
+# Decide the range of the maxdepth to search for the best
+tuneGrid = expand.grid(mtry = 2:6)
+# Tell caret to do 10 - fold cross-Validation
+trControl = trainControl(method = "cv",
+                         number = 30)
+# train a forest using above setup
+forest_rf <- train(target~., data=df_train, 
+                                method = "rf", 
+                                trControl = trControl,
+                                tuneGrid = tuneGrid)
+plot(forest_rf)
+```
+
+ 
+-------
+
+3. Use cross-validation with of 30 folds to tune random forest (method='ranger').  What are the parameters that produce the greatest accuracy?
+
+```{r}
+trControl = trainControl(method = "cv",
+                         number = 30)
+tuneGrid = expand.grid(mtry = 2:4,
+                       splitrule = c('gini', 'extratrees'),
+                       min.node.size = c(1:10))
+forest_ranger <- train(target~., data=df_train, 
+                    method = "ranger", 
+                    trControl = trControl,
+                    tuneGrid = tuneGrid)
+
+plot(forest_ranger) 
+```
+
+
+-------
+
+4. Go to https://topepo.github.io/caret/available-models.html and pick a classification model.  Tune the classification model using cross-validation of 30 folds. 
+
+```{r}
+trControl = trainControl(method = "cv",
+                         number = 30)
+
+knear <- train(target~., data=df_train, 
+                    method = "kknn", 
+                    trControl = trControl)
+plot(knear)
+```
+
+-------
+ 
+5. Pick three models at [this link](https://topepo.github.io/caret/available-models.html) to compare using 15-fold cross validation method. Evaluate the accuracy of the final model on the test data. What is the best model?
+
+The best model is the boosted tree. 
+
+
+```{r}
+trControl = trainControl(method = "cv",
+                         number = 15)
+ada_boost <- train(target~., data=df_train, 
+                                method = "adaboost", 
+                              trControl = trControl)
+earth <- train(target~., data=df_train, 
+                    method = "earth", 
+                    trControl = trControl)
+blackboost <- train(target~., data=df_train, 
+                               method = "blackboost", 
+                                trControl = trControl)
+results <- resamples(list('Ada Boost' = ada_boost,
+                          'Bagged Model' = earth,
+                          'Boosted Tree'= blackboost))
+bwplot(results)
+
+```
+
+
+-------
+
+6. Redo Question 5 on this following dataset. 
+
+ - `Adult Census Income` dataset ([Link](https://www.kaggle.com/uciml/adult-census-income)) where the target variable is `income`
+ -  `Credit card default` dataset ([link](https://www.kaggle.com/uciml/default-of-credit-card-clients-dataset)) where the target variable is `default.payment.next.month`
