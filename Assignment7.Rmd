@@ -147,7 +147,7 @@ d2 <- df %>% filter(Vaccine_Type!=('All'), Province_State == c("Rhode Island", "
 d2 %>% ggplot()+geom_line(mapping=aes(x=Date, y=vac_admin, color=Province_State)) + labs(x='Month', 
        y = 'Vaccines Administered', 
        title = 'Vaccines Administered by Date in NE', 
-       caption = 'Massachusetts is the front runner in vaccine administrations.')
+       caption = 'Massachusetts is the front runner in vaccine administrations.') 
 ```
 
 
