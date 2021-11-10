@@ -1,0 +1,65 @@
+---
+title: "Kendall Midterm"
+author: "Leanne Kendall"
+date: "11/4/2021"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Visualizations
+
+![](vis1.png)
+
+
+
+## Visualizations
+![](vis2.png)
+
+## Visualizations
+![](vis3.png)
+
+## Visualizations
+![](vis5.png)
+
+## Visualizations
+![](vis6.png)
+
+## Visualizations
+![](vis7.png)
+
+
+## Visualizations
+![](vis8.png)
+
+## Visualizations
+![](vis11.gif)
+
+## Visualizations
+![](vis4.png)
+
+## Visualizations
+![](vis9.png)
+
+## Visualizations
+![](vis10.gif)
+
+## Prediciting Total Charge
+
+- Target Variable: tot (total charge for visit) -> "High" (equal to or above median) & "Low" (below median)
+
+![](model1a.png)
+
+## Predicting Age
+
+- I created a binary variable from the age column
+- Age < 18, "minor"
+- Age >= 18, "adult"
+
+![](model2b.png)
+
+## Predicting Age
+
+![](model2a.png)
